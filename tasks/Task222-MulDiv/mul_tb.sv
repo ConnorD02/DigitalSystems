@@ -12,6 +12,14 @@ mul m1(Y,A,B);
 initial
 begin
 	//Write test code here
+	A = 4'b0011;
+	B = 4'b1000;
+	#10ps;
+	assert(Y == A*B)
+		$display("pass");
+	else
+		$display("fail");
+	
 end
 
 endmodule
