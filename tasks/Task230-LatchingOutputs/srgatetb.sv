@@ -1,8 +1,7 @@
 module srgate_tb;
 
 //Internal signals
-logic Q, notQ, S,R;
-
+logic Q, notQ, S,R; 
 //Instantiate and connect
 srgate u1 (Q, notQ, S,R);
 
@@ -33,7 +32,7 @@ begin
 	{S,R} = 2'b00;
 	#10;
 	assert (Q === 1'b1) $display("Pass"); else $error("Fail");
-	assert (notQ === 1'b0) $display("Pass"); else $error("Fail");	
+	assert  (notQ === 1'b0) $display("Pass"); else $error("Fail");	
 
 	//R=1
 	{S,R} = 2'b01;
@@ -55,7 +54,7 @@ begin
 end
 
 //This block only runs when S or R **change**
-always @(S)
+always @(S,R)
 begin
 	$display("{S,R}={%b,%b}", S, R);
 end
