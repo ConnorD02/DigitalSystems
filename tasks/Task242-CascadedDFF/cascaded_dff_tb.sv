@@ -19,7 +19,7 @@ end
 //Clock
 initial begin
 	CLK = 1;
-	repeat(17) 
+	repeat(20) 
 		#50ps CLK = ~CLK;
 end
 
