@@ -4,37 +4,63 @@ logic [N-1:0] D;
 logic CLK, N_RESET, EN;
 logic [N-1:0] LED;
 
-//Power on reset
-initial begin
-	N_RESET = 0;
-	#1ps
-	N_RESET = 1;
-end
-
 //Clock
 initial begin
 	CLK = 1;
-	repeat(17) 
+	repeat(20) 
 		#50ps CLK = ~CLK;
 end
 
 d_ffN u1(Q, D, CLK, N_RESET, EN);
 initial begin
 
-logic word[N-1:0] = {1,1,0,0,1,0,1,0};
-@(posedge N_RESET);
-@(posedge CLK)
+D = 0;
+	N_RESET = 0;
+	#10ps;
+	N_RESET = 1;
 
-for(int i = 0; i < 8; i++)begin
-	@(posedge CLK);
-	D = word[i];
+	//Test for when D = 1
+	@(negedge CLK);	//Wait for negative edge of clock
+	D[0] = 1;		//Set D = 1
+	@(posedge CLK);	//Wait for positive edge of clock
+	#10 assert(Q[0] == D[0]) $display("PASS"); else $error("FAIL");	//Check Q
+
+	//Test for when D = 0
+	@(negedge CLK);	//Wait for negative edge of clock
+	D[0] = 0;		//Set D = 0
+	@(posedge CLK);	//Wait for negative edge of clock
+	#10 assert(Q == D[0]) $display("PASS"); else $error("FAIL");	//Check Q
+
+	//Test reset when D = 1
+	@(negedge CLK);	//Wait for negative edge of clock
+	D[0] = 1;		//Set D = 1
+	@(posedge CLK);	//Wait for positive edge of clock
+	#10 assert(Q[0] == D[0]) $display("PASS"); else $error("FAIL");	//Check Q
+	#10ps;	
+	N_RESET = 0;
+	#15ps;
+	N_RESET = 1;
+	#10 assert(Q[0] == 0) $display("RESET PASS"); else $error("RESET FAIL");	//Check Q
+
+	//Test D is ignored when reset
+	@(negedge CLK);	//Wait for negative edge of clock
+	D[0] = 0;
+	@(posedge CLK);	//Wait for positive edge of clock
+	@(negedge CLK);	//Wait for negative edge of clock
+	N_RESET = 0;
+	D[0] = 1;
+	@(posedge CLK);	//Wait for positive edge of clock
+	#10 assert(Q[0] == 0) $display("RESET PASS"); else $error("RESET FAIL");	//Check Q
+	@(negedge CLK);	//Wait for negative edge of clock
+	N_RESET = 1;
+	@(posedge CLK);	//Wait for positive edge of clock
+	@(negedge CLK);	//Wait for negative edge of clock
+
 end
 
-//Wait for rising edge of clock to observe the last bit
-	@(posedge CLK);
-	//Wait for the Tpd + 1ps
-	#11ps;
+//always @(negedge N_RESET) begin
+//	#1 assert(Q == 0) $display("RESET PASS"); else $error("RESET FAIL");	//Check Q
+//	
+//end
 
-	assert (LED == 8'b11001010) $display("PASSED"); else $error("FAILED");
-end
 endmodule
