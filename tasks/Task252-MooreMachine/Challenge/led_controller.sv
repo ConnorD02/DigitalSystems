@@ -31,9 +31,13 @@ always_comb begin : next_state_logic
 	//WRITE NEXT STATE LOGIC HERE HERE
 	
 	// hint - state.next() and state.prev() are useful
+	//These will automatically increment or decrement through the enumerated data type
 	
 	// See https://www.chipverify.com/systemverilog/systemverilog-enumeration
+	
+		state.next();
 		
+		STATE_t[n];
 	
 end
 	
